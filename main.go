@@ -76,6 +76,6 @@ func deleteProfile(name string) error {
 
 func must(err error) {
 	if err != nil {
-		log.Fatal(err, "ERR")
+		log.Fatal(err)
 	}
 }
