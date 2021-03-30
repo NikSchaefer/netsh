@@ -12,7 +12,7 @@ import (
 func main() {
 
 	name := "sideswipe"
-	password := "myPassword"
+	password := ""
 
 	createConnectDelete(name, password)
 }
@@ -20,9 +20,9 @@ func main() {
 func createConnectDelete(name, pass string) error {
 	createFileProfile(name, pass)
 	addProfile(name)
-	connectToNetwork(name)
-	deleteProfile(name)
 	deleteFileProfile(name)
+	connectToNetwork(name)
+	// deleteProfile(name)
 	return nil
 }
 
@@ -39,6 +39,7 @@ func createFileProfile(name, pass string) error {
 	str = strings.Replace(str, "{SSID}", name, 2)
 
 	file.Write([]byte(str))
+	file.Close()
 	return nil
 }
 func deleteFileProfile(name string) error {
