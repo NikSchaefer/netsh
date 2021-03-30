@@ -7,15 +7,37 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 func main() {
+	start := time.Now()
 
 	name := "sideswipe"
-	password := ""
+	found := tryPws(name)
+	if found == "" {
+		fmt.Println("Not Found")
+	}
+	fmt.Println(found, time.Since(start))
+}
 
-	passed := loginToNetwork(name, password)
-	fmt.Println(passed)
+func tryPws(name string) string {
+	var arr = [...]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+		"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+
+	for i := 0; i < len(arr); i++ {
+		for j := 0; j < len(arr); j++ {
+			for ii := 0; ii < len(arr); ii++ {
+				for jj := 0; jj < len(arr); jj++ {
+					pw := arr[i] + arr[j] + arr[ii] + arr[jj]
+					if loginToNetwork(name, pw) {
+						return pw
+					}
+				}
+			}
+		}
+	}
+	return ""
 }
 
 func loginToNetwork(name, pass string) bool {
