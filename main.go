@@ -22,7 +22,7 @@ func createConnectDelete(name, pass string) error {
 	addProfile(name)
 	connectToNetwork(name)
 	deleteProfile(name)
-
+	deleteFileProfile(name)
 	return nil
 }
 
@@ -39,6 +39,12 @@ func createFileProfile(name, pass string) error {
 	str = strings.Replace(str, "{SSID}", name, 2)
 
 	file.Write([]byte(str))
+	return nil
+}
+func deleteFileProfile(name string) error {
+	filename := fmt.Sprintf("_%s.xml", name)
+	err := os.Remove(filename)
+	must(err)
 	return nil
 }
 
