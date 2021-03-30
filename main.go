@@ -14,16 +14,27 @@ func main() {
 	name := "sideswipe"
 	password := ""
 
-	createConnectDelete(name, password)
+	passed := loginToNetwork(name, password)
+	fmt.Println(passed)
 }
 
-func createConnectDelete(name, pass string) error {
+func loginToNetwork(name, pass string) bool {
+	deleteProfile(name)
 	createFileProfile(name, pass)
-	addProfile(name)
+	err := addProfile(name)
 	deleteFileProfile(name)
+	if err != nil {
+		return false
+	}
 	connectToNetwork(name)
-	// deleteProfile(name)
-	return nil
+	return true
+}
+func addProfile(name string) error {
+	dir, err := os.Getwd()
+	must(err)
+	file := fmt.Sprintf("filename=%s\\_%s.xml", dir, name)
+	_, err = exec.Command(`netsh`, `wlan`, `add`, `profile`, file, `interface="WI-FI"`, `user=current`).Output()
+	return err
 }
 
 func createFileProfile(name, pass string) error {
@@ -53,24 +64,13 @@ func connectToNetwork(name string) bool {
 	str := fmt.Sprintf("name=%s", name)
 	out, err := exec.Command("netsh", "wlan", "connect", str).Output()
 	must(err)
-	fmt.Print(out)
+	fmt.Print(string(out))
 	return false
 }
 
 func deleteProfile(name string) error {
-	out, err := exec.Command(`netsh`, `wlan`, `delete`, `profile`, name).Output()
+	_, err := exec.Command(`netsh`, `wlan`, `delete`, `profile`, name).Output()
 	must(err)
-	fmt.Print(string(out))
-	return nil
-}
-
-func addProfile(name string) error {
-	dir, err := os.Getwd()
-	must(err)
-	file := fmt.Sprintf("filename=%s\\_%s.xml", dir, name)
-	out, err := exec.Command(`netsh`, `wlan`, `add`, `profile`, file, `interface="WI-FI"`, `user=current`).Output()
-	must(err)
-	fmt.Print(string(out))
 	return nil
 }
 
