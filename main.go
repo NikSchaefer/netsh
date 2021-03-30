@@ -14,8 +14,16 @@ func main() {
 	name := "sideswipe"
 	password := "myPassword"
 
-	createFileProfile(name, password)
+	createConnectDelete(name, password)
+}
 
+func createConnectDelete(name, pass string) error {
+	createFileProfile(name, pass)
+	addProfile(name)
+	connectToNetwork(name)
+	deleteProfile(name)
+
+	return nil
 }
 
 func createFileProfile(name, pass string) error {
@@ -35,7 +43,6 @@ func createFileProfile(name, pass string) error {
 }
 
 func connectToNetwork(name string) bool {
-	// netsh wlan connect name=sideswipe
 	str := fmt.Sprintf("name=%s", name)
 	out, err := exec.Command("netsh", "wlan", "connect", str).Output()
 	must(err)
@@ -53,8 +60,7 @@ func deleteProfile(name string) error {
 func addProfile(name string) error {
 	dir, err := os.Getwd()
 	must(err)
-	file := fmt.Sprintf("filename=%s\\profile.xml", dir)
-
+	file := fmt.Sprintf("filename=%s\\_%s.xml", dir, name)
 	out, err := exec.Command(`netsh`, `wlan`, `add`, `profile`, file, `interface="WI-FI"`, `user=current`).Output()
 	must(err)
 	fmt.Print(string(out))
