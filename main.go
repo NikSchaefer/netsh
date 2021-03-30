@@ -17,13 +17,14 @@ func main() {
 	start := time.Now()
 
 	name := "sideswipe"
-	initalize(name)
 	found, passed := tryPws(name)
-	fmt.Println(found, passed, time.Since(start))
+	fmt.Println(found, passed)
+	fmt.Println(time.Since(start))
 	connectToNetwork(name)
 }
 
 func tryPws(name string) (string, bool) {
+	initalize(name)
 	previous := "{password}"
 	for i := 0; i < len(arr); i++ {
 		for j := 0; j < len(arr); j++ {
