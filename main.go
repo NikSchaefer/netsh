@@ -7,20 +7,26 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"time"
 )
 
 var arr = [...]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
 	"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 
 func main() {
-	start := time.Now()
 
-	name := "sideswipe"
-	found, passed := tryPws(name)
-	fmt.Println(found, passed)
-	fmt.Println(time.Since(start))
+	password, isSucess := tryPws("sideswipe")
+	fmt.Println(password, isSucess)
+
+
+}
+
+func loginToNetwork(name, pass string) error {
+	initalize(name)
+	createFileProfile(name, pass, "{password}")
+	err := addProfile()
 	connectToNetwork(name)
+	close()
+	return err
 }
 
 func tryPws(name string) (string, bool) {
@@ -31,7 +37,8 @@ func tryPws(name string) (string, bool) {
 			for ii := 0; ii < len(arr); ii++ {
 				for jj := 0; jj < len(arr); jj++ {
 					pw := arr[i] + arr[j] + arr[ii] + arr[jj]
-					if loginToNetwork(name, pw, previous) {
+					if tryConnection(name, pw, previous) {
+						close()
 						return pw, true
 					}
 					previous = pw
@@ -39,6 +46,7 @@ func tryPws(name string) (string, bool) {
 			}
 		}
 	}
+	close()
 	return "", false
 }
 func initalize(name string) error {
@@ -53,8 +61,12 @@ func initalize(name string) error {
 	f.Close()
 	return nil
 }
-
-func loginToNetwork(name, pass, prev string) bool {
+func close() error {
+	err := os.Remove("profile.xml")
+	must(err)
+	return err
+}
+func tryConnection(name, pass, prev string) bool {
 	createFileProfile(name, pass, prev)
 	err := addProfile()
 	return err == nil
